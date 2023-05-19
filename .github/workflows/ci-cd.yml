@@ -28,5 +28,8 @@ jobs:
       - name: Fix permission on react-scripts
         run: chmod +x node_modules/.bin/react-scripts
 
+      - name: Run the tests
+        run: npm test
+
       - name: Build
         run: npm run build
