@@ -9,18 +9,14 @@ jobs:
     name: Building ReactJS App
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.x
 
       - name: Install dependencies
         run: npm install react-scripts --save
@@ -33,3 +29,31 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  docker-image:
+    name: Building and upload Docker image to DockerHub
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: npm install react-scripts --save
+
+      - name: Fix permission on react-scripts
+        run: chmod +x node_modules/.bin/react-scripts
+
+      - name: Run the tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: docker build
+        run: docker build -t reactjs:'${{github.sha}}' .
