@@ -25,5 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm install react-scripts --save
 
+      - name: Fix permission on react-scripts
+        run: chmod +x node_modules/.bin/react-scripts
+
       - name: Build
         run: npm run build
