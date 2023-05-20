@@ -74,3 +74,22 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  deploy-eks:
+    name: Deploying Kubernetes Cluster in AWS
+    needs: docker-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: terraform apply
+        uses: dflook/terraform-apply@v1
+        with:
+          variables: |
+            aws_access_key = "${{ secrets.TERRAFORM_ACCESS_KEY_ID }}"
+            aws_secret_key = "${{ secrets.TERRAFORM_SECRET_ACCESS_KEY }}"
+            region = ${{ secrets.AWS_REGION }}
+          path: ./terraform
+          auto_approve: true
